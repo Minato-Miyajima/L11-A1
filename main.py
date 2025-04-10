@@ -66,4 +66,28 @@ class RestaurantOrderManegement:
         background_image=original_image.subsample(
             original_image.width()//bg_width,
             original_image.height()//bg_height)
-        canvas.create_image(0,0)
+        canvas.create_image(0,0,anchor=tk.NW,image=background_image)
+        canvas.image=background_image
+
+    def update_menu_prices(self,*args):
+        currency=self.currency_var.get()
+        symbol = "₹" if currency == "INR" else "$"
+        rate=self.exchange_rate if currency=="INR" else 1
+        for item,entry in self.menu_quantities.items():
+            quantity=entry.get()
+            if quantity.isdigit():
+                quantity=int(quantity)
+                price=self.menu_items[item]*rate
+                cost=quantity*price
+                total_cost+=cost
+                if quantity>0:
+                    order_summary+=f"\nTotal Cost:{symbol}{total_cost}"
+                    messagebox.showinfo("Order Placed",order_summary)
+                else:
+                    messagebox.showerror("Error","Please order at least one item")
+
+if __name__=="__main__":
+    root=tk.Tk()
+    app=RestaurantOrderManegement(root)
+    root.geometry("800x600")
+    root.mainloop()
